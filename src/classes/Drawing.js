@@ -1,10 +1,10 @@
 import AnimationFrame from '@/classes/AnimationFrame';
 
 class Line {
-    constructor() {
-        this.points = [];
+    constructor(points = []) {
+        this.points = points;
 
-        this.pointsLength = 0;
+        this.pointsLength = points.length;
 
         this.styles = {
             thickness: 3
@@ -17,7 +17,7 @@ class Line {
     }
 
     getPoint(n) {
-        this.points[n];
+        return this.points[n];
     }
 
     getPointsLength() {
@@ -42,8 +42,8 @@ class Drawing {
         // this.ctx.shadowColor = 'rgb(0, 0, 0)';
 
         this.isDrawing = false;
-        this.points = [];
         this.lines = [];
+        this.line = null;
 
         this.raf = new AnimationFrame(this.updateScene.bind(this));
 
@@ -59,10 +59,8 @@ class Drawing {
     mouseDownHandler(e) {
         this.isDrawing = true;
 
-        this.addPoint({
-            x: e.clientX,
-            y: e.clientY
-        });
+        this.line = new Line();
+        this.line.addPoint([e.clientX, e.clientY]);
 
         this.raf.start();
     }
@@ -70,19 +68,15 @@ class Drawing {
     mouseMoveHandler(e) {
         if (!this.isDrawing) return;
 
-        this.addPoint({
-            x: e.clientX,
-            y: e.clientY
-        });
-
-        // this.drawPoints();
-        // this.cutPoints();
+        this.line.addPoint([e.clientX, e.clientY]);
     }
 
     mouseUpHandler(e) {
         this.raf.stop();
         this.isDrawing = false;
-        this.clearPoints();
+
+        this.lines.push(this.line);
+        this.line = null;
     }
 
     /**
@@ -92,24 +86,29 @@ class Drawing {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     }
 
-    drawPoints(points) {
-        let p1 = points[0];
-        let p2 = points[1];
+    drawLine(line) {
+        let p1 = line.getPoint(0);
+        let p2 = line.getPoint(1);
 
         if (!p1) return;
 
         this.ctx.beginPath();
-        this.ctx.moveTo(p1.x, p1.y);
+        this.ctx.moveTo(p1[0], p1[1]);
 
-        for (var i = 1, len = points.length; i < len; i++) {
-            var midPoint = this.midPointBtw(p1, p2);
-            this.ctx.quadraticCurveTo(p1.x, p1.y, midPoint.x, midPoint.y);
-            p1 = points[i];
-            p2 = points[i + 1];
+        for (let i = 1, len = line.getPointsLength(); i < len; i++) {
+            let midPoint = this.midPointBtw(p1, p2);
+
+            this.ctx.quadraticCurveTo(p1[0], p1[1], midPoint[0], midPoint[1]);
+
+            p1 = line.getPoint(i);
+            p2 = line.getPoint(i + 1);
         }
 
-        this.ctx.lineTo(p1.x, p1.y);
+        this.ctx.lineTo(p1[0], p1[1]);
         this.ctx.stroke();
+
+        p1 = null;
+        p2 = null;
     }
 
     resizeScene() {
@@ -122,11 +121,14 @@ class Drawing {
     updateScene() {
         this.clearScene();
 
-        this.lines.forEach((points) => {
-            this.drawPoints(points);
+        this.lines.forEach((line) => {
+            this.drawLine(line);
         });
 
-        this.drawPoints(this.points);
+        if (this.line !== null) {
+            this.drawLine(this.line);
+        }
+
     }
 
     thickness(val) {
@@ -135,29 +137,13 @@ class Drawing {
     }
 
     /**
-     * Points manipulation
-     */
-    addPoint(point) {
-        this.points.push(point);
-    }
-
-    getPoint(n = 0) {
-        return this.points[n];
-    }
-
-    clearPoints() {
-        this.lines.push(this.points);
-        this.points = [];
-    }
-
-    /**
      * Helpers
      */
     midPointBtw(p1, p2) {
-        return {
-            x: p1.x + (p2.x - p1.x) / 2,
-            y: p1.y + (p2.y - p1.y) / 2
-        };
+        return [
+            p1[0] + (p2[0] - p1[0]) / 2,
+            p1[1] + (p2[1] - p1[1]) / 2
+        ];
     }
 }
 
