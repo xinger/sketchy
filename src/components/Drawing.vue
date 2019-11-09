@@ -14,6 +14,10 @@
             thickness: {
                 type: Number,
                 default: 3
+            },
+            opacity: {
+                type: Number,
+                default: 1
             }
         },
         computed: {
@@ -27,6 +31,9 @@
         watch: {
             thickness(val) {
                 this.drawing.thickness(val);
+            },
+            opacity(val) {
+                this.drawing.opacity(val / 100);
             }
         }
     }

@@ -40,7 +40,7 @@ class Drawing {
 
         this.ctx = this.canvas.getContext('2d');
         this.ctx.lineJoin = this.ctx.lineCap = 'round';
-        // this.ctx.shadowBlur = 1.2;
+        // this.ctx.shadowBlur = 10;
         // this.ctx.shadowColor = 'rgb(0, 0, 0)';
 
         this.isDrawing = false;
@@ -48,7 +48,8 @@ class Drawing {
         this.line = null;
 
         this.lineStyle = {
-            thickness : 3
+            thickness: 3,
+            opacity: 1
         };
 
         this.raf = new AnimationFrame(this.updateScene.bind(this));
@@ -71,6 +72,8 @@ class Drawing {
 
         this.line.addPoint([e.clientX, e.clientY]);
 
+        this.lines.push(this.line);
+
         this.raf.start();
     }
 
@@ -86,7 +89,6 @@ class Drawing {
         this.raf.stop();
         this.isDrawing = false;
 
-        this.lines.push(this.line);
         this.line = null;
     }
 
@@ -133,22 +135,21 @@ class Drawing {
         this.clearScene();
 
         this.lines.forEach((line) => {
-
+            /** Set line styles */
             this.ctx.lineWidth = line.style.thickness;
-            console.log(line.style.thickness);
-
+            this.ctx.strokeStyle = `rgba(0, 0, 0, ${line.style.opacity})`;
             this.drawLine(line);
         });
-
-        if (this.line !== null) {
-            this.ctx.lineWidth = this.line.style.thickness;
-            this.drawLine(this.line);
-        }
-
     }
 
     thickness(val) {
         this.lineStyle.thickness = val;
+        this.updateScene();
+    }
+
+    opacity(val) {
+        this.lineStyle.opacity = val;
+        console.log(val);
         this.updateScene();
     }
 
