@@ -50,6 +50,7 @@ class Drawing {
         this.canvas.onmousedown = this.mouseDownHandler.bind(this);
         this.canvas.onmousemove = this.mouseMoveHandler.bind(this);
         window.onmouseup = this.mouseUpHandler.bind(this);
+        window.onresize = this.windowResizeHandler.bind(this);
     }
 
     /**
@@ -82,6 +83,11 @@ class Drawing {
         this.isDrawing = false;
 
         this.line = null;
+    }
+
+    windowResizeHandler() {
+        this.resizeScene();
+        this.updateScene();
     }
 
     /**
