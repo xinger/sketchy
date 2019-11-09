@@ -1,14 +1,12 @@
 import AnimationFrame from '@/classes/AnimationFrame';
 
 class Line {
-    constructor(points = []) {
+    constructor({points = [], style = {}}) {
         this.points = points;
 
         this.pointsLength = points.length;
 
-        this.styles = {
-            thickness: 3
-        }
+        this.style = Object.assign({}, style);
     }
 
     addPoint(xy) {
@@ -25,7 +23,11 @@ class Line {
     }
 
     setThickness(val) {
-        this.styles.thickness = val;
+        this.style.thickness = val;
+    }
+
+    getStyle() {
+        return this.style;
     }
 }
 
@@ -45,12 +47,16 @@ class Drawing {
         this.lines = [];
         this.line = null;
 
+        this.lineStyle = {
+            thickness : 3
+        };
+
         this.raf = new AnimationFrame(this.updateScene.bind(this));
 
         /** Bind events */
         this.canvas.onmousedown = this.mouseDownHandler.bind(this);
         this.canvas.onmousemove = this.mouseMoveHandler.bind(this);
-        this.canvas.onmouseup = this.mouseUpHandler.bind(this);
+        window.onmouseup = this.mouseUpHandler.bind(this);
     }
 
     /**
@@ -59,7 +65,10 @@ class Drawing {
     mouseDownHandler(e) {
         this.isDrawing = true;
 
-        this.line = new Line();
+        this.line = new Line({
+            style: this.lineStyle
+        });
+
         this.line.addPoint([e.clientX, e.clientY]);
 
         this.raf.start();
@@ -72,6 +81,8 @@ class Drawing {
     }
 
     mouseUpHandler(e) {
+        if (!this.isDrawing) return;
+
         this.raf.stop();
         this.isDrawing = false;
 
@@ -122,17 +133,22 @@ class Drawing {
         this.clearScene();
 
         this.lines.forEach((line) => {
+
+            this.ctx.lineWidth = line.style.thickness;
+            console.log(line.style.thickness);
+
             this.drawLine(line);
         });
 
         if (this.line !== null) {
+            this.ctx.lineWidth = this.line.style.thickness;
             this.drawLine(this.line);
         }
 
     }
 
     thickness(val) {
-        this.ctx.lineWidth = val;
+        this.lineStyle.thickness = val;
         this.updateScene();
     }
 
