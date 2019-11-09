@@ -137,4 +137,25 @@
         &:hover
             opacity 0.9
 
+    input[type="range"]
+        -webkit-appearance none
+        padding 10px 0
+
+        &:focus
+            outline none
+
+        &::-webkit-slider-runnable-track
+            height 2px
+            background rgba(0,0,0,0.2)
+
+        &::-webkit-slider-thumb
+            -webkit-appearance: none;
+            width 10px
+            height 10px
+            background rgba(0,0,0,1)
+            margin-top -4px
+            border-radius 100%
+
+
+
 </style>
