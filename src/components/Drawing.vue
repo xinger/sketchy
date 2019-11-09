@@ -15,9 +15,9 @@
                 type: Number,
                 default: 3
             },
-            opacity: {
-                type: Number,
-                default: 1
+            color: {
+                type: String,
+                default: 'rgba(0,0,0,1)'
             }
         },
         computed: {
@@ -32,8 +32,8 @@
             thickness(val) {
                 this.drawing.thickness(val);
             },
-            opacity(val) {
-                this.drawing.opacity(val / 100);
+            color(val) {
+                this.drawing.color(val);
             }
         }
     }

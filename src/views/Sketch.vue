@@ -1,8 +1,8 @@
 <template>
     <div class="sketch">
         <drawing
-            :thickness="parseInt(thickness)"
-            :opacity="parseInt(opacity)"
+            :thickness="parseInt(lineThickness)"
+            :color="lineColor"
         ></drawing>
 
         <div class="sketch__panel">
@@ -11,12 +11,24 @@
 
                 <div class="sketch__control">
                     <label>Thickness</label>
-                    <input type="range" v-model="thickness" min="1" max="20">
+                    <input type="range" v-model="lineThickness" min="1" max="20">
                 </div>
 
                 <div class="sketch__control">
                     <label>Opacity</label>
                     <input type="range" v-model="opacity" min="1" max="100">
+                </div>
+
+                <div class="sketch__control" style="flex-direction: row">
+
+                    <div class="color"
+                         v-for="clr in colors"
+                         :style="{
+                            background: toRgb(clr)
+                         }"
+                         @click="chooseColorHandler(clr)"
+                    ></div>
+
                 </div>
 
             </div>
@@ -33,8 +45,17 @@
         name: 'Sketch',
         data: function() {
             return {
-                thickness: 3,
-                opacity: 100
+                lineThickness: 3,
+                opacity: 100,
+                colors: [
+                    [0, 0, 0],
+                    [80, 81, 79],
+                    [242, 95, 92],
+                    [255, 224, 102],
+                    [36, 123, 160],
+                    [12, 193, 179]
+                ],
+                color: [0,0,0]
             }
         },
         components: {
@@ -44,7 +65,25 @@
 
         },
         computed: {
+            lineColor() {
+                return this.toRgb(this.color, this.opacity / 100);
+            }
+        },
+        methods: {
+            chooseColorHandler(color) {
+                this.color = color;
+            },
+            toRgb(color, alpha = null) {
+                if (color[3] === undefined) {
+                    color[3] = 1;
+                }
 
+                if (alpha !== null) {
+                    color[3] = alpha;
+                }
+
+                return `rgba(${color.join(',')})`;
+            }
         },
         mounted() {
 
@@ -73,7 +112,7 @@
                 background #fff
                 box-shadow:0 12px 28px 0 rgba(0,0,0,0.2),0 2px 4px 0 rgba(0,0,0,0.1)
                 border-radius 100px
-                width 400px
+                /*width 400px*/
                 height 60px
                 opacity 0.5
                 align-items center
@@ -85,5 +124,17 @@
         &__control
             display flex
             flex-direction column
+            margin 0 20px
+
+    .color
+        width 16px
+        height 16px
+        border-radius 100%
+        margin-left 4px
+        border 2px solid rgba(0,0,0,0.2)
+        cursor pointer
+
+        &:hover
+            opacity 0.9
 
 </style>

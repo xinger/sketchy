@@ -21,14 +21,6 @@ class Line {
     getPointsLength() {
         return this.pointsLength;
     }
-
-    setThickness(val) {
-        this.style.thickness = val;
-    }
-
-    getStyle() {
-        return this.style;
-    }
 }
 
 class Drawing {
@@ -49,7 +41,7 @@ class Drawing {
 
         this.lineStyle = {
             thickness: 3,
-            opacity: 1
+            color: 'rgba(0,0,0,1)'
         };
 
         this.raf = new AnimationFrame(this.updateScene.bind(this));
@@ -137,7 +129,7 @@ class Drawing {
         this.lines.forEach((line) => {
             /** Set line styles */
             this.ctx.lineWidth = line.style.thickness;
-            this.ctx.strokeStyle = `rgba(0, 0, 0, ${line.style.opacity})`;
+            this.ctx.strokeStyle = line.style.color;
             this.drawLine(line);
         });
     }
@@ -147,9 +139,8 @@ class Drawing {
         this.updateScene();
     }
 
-    opacity(val) {
-        this.lineStyle.opacity = val;
-        console.log(val);
+    color(val) {
+        this.lineStyle.color = val;
         this.updateScene();
     }
 
