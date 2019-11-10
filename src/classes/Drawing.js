@@ -21,6 +21,13 @@ class Line {
     getPointsLength() {
         return this.pointsLength;
     }
+
+    toData() {
+        return {
+            points: this.points,
+            style: this.style
+        };
+    }
 }
 
 class Drawing {
