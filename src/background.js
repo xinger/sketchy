@@ -19,7 +19,11 @@ function createWindow() {
     // Create the browser window.
     console.log(__dirname);
     win = new BrowserWindow({
-        width: 800, height: 600, webPreferences: {
+        title: 'Sketchy',
+        titleBarStyle: 'hidden',
+        width: 800,
+        height: 600,
+        webPreferences: {
             nodeIntegration: true,
             icon: __dirname +  '/../build/icon.icns'
         }

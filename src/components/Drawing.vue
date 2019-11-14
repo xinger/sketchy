@@ -25,7 +25,14 @@
         },
         mounted() {
             this.drawing = new Drawing(this.$refs.drawing, {
-                thickness: this.thickness
+                events: {
+                    start: () => {
+                        this.$emit('start');
+                    },
+                    stop: () => {
+                        this.$emit('stop');
+                    }
+                }
             });
         },
         watch: {

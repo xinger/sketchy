@@ -39,7 +39,7 @@ class Drawing {
 
         this.ctx = this.canvas.getContext('2d');
         this.ctx.lineJoin = this.ctx.lineCap = 'round';
-        // this.ctx.shadowBlur = 10;
+        this.ctx.shadowBlur = 10;
         // this.ctx.shadowColor = 'rgb(0, 0, 0)';
 
         this.isDrawing = false;
@@ -75,6 +75,10 @@ class Drawing {
         this.lines.push(this.line);
 
         this.raf.start();
+
+        if (this.config.events.start) {
+            this.config.events.start();
+        }
     }
 
     mouseMoveHandler(e) {
@@ -90,6 +94,10 @@ class Drawing {
         this.isDrawing = false;
 
         this.line = null;
+
+        if (this.config.events.stop) {
+            this.config.events.stop();
+        }
     }
 
     windowResizeHandler() {

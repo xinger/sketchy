@@ -3,35 +3,34 @@
         <drawing
             :thickness="parseInt(lineThickness)"
             :color="lineColor"
+            @start="startDrawingHandler"
+            @stop="stopDrawingHandler"
         ></drawing>
 
         <div class="sketch__panel">
 
-            <div class="sketch__panel__container">
+            <div class="sketch__control">
+                <label>Thickness</label>
+                <input type="range" v-model="lineThickness" min="3" max="23" step="5">
+            </div>
 
-                <div class="sketch__control">
-                    <label>Thickness</label>
-                    <input type="range" v-model="lineThickness" min="1" max="20">
-                </div>
+            <div class="sketch__control">
+                <label>Opacity</label>
+                <input style="direction: rtl" type="range" v-model="opacity" min="0" max="100" step="10">
+            </div>
 
-                <div class="sketch__control">
-                    <label>Opacity</label>
-                    <input type="range" v-model="opacity" min="1" max="100">
-                </div>
-
-                <div class="sketch__control" style="flex-direction: row">
-
-                    <div class="color"
-                         v-for="clr in colors"
-                         :style="{
-                            background: toRgb(clr)
-                         }"
-                         @click="chooseColorHandler(clr)"
-                    ></div>
-
-                </div>
+            <div class="sketch__control" style="flex-direction: row">
+                <label>Color</label>
+                <div class="color"
+                     v-for="clr in colors"
+                     :style="{
+                        background: toRgb(clr)
+                     }"
+                     @click="chooseColorHandler(clr)"
+                ></div>
 
             </div>
+
 
         </div>
 
@@ -49,7 +48,6 @@
                 opacity: 100,
                 colors: [
                     [0, 0, 0],
-                    [80, 81, 79],
                     [242, 95, 92],
                     [255, 224, 102],
                     [36, 123, 160],
@@ -83,6 +81,14 @@
                 }
 
                 return `rgba(${color.join(',')})`;
+            },
+
+            startDrawingHandler() {
+                document.body.classList.add('drawing');
+            },
+
+            stopDrawingHandler() {
+                document.body.classList.remove('drawing');
             }
         },
         mounted() {
@@ -99,47 +105,63 @@
         &__panel
             position absolute
             display flex
-            justify-content center
-            bottom 20px
-            width 100%
-            height 60px
             z-index 10
-            pointer-events none
+            /*pointer-events none*/
+            user-select none
+            opacity 0.25
+            transition all 0.3s ease
+            width 100%
+            height 42px
+            bottom 0
+            padding 0 12px
+            box-sizing border-box
+            justify-content: flex-end;
+            border-top 1px solid rgba(0,0,0,0)
 
             &__container
-                pointer-events auto
                 display flex
-                background #fff
-                box-shadow:0 12px 28px 0 rgba(0,0,0,0.2),0 2px 4px 0 rgba(0,0,0,0.1)
                 border-radius 100px
-                /*width 400px*/
                 height 60px
-                opacity 0.5
                 align-items center
-                justify-content space-around
+                justify-content right
 
                 input
                     width 100px
+            &:hover
+                opacity 1
+                border-top 1px solid rgba(0,0,0,0.1)
+                background rgba(255,255,255,0.9)
 
         &__control
+            pointer-events auto
             display flex
-            flex-direction column
-            margin 0 20px
+            margin-left 30px
+            align-items center
+
+            label
+                margin-right 10px
+                letter-spacing 0.5px
 
     .color
         width 16px
         height 16px
         border-radius 100%
-        margin-left 4px
-        border 2px solid rgba(0,0,0,0.2)
-        cursor pointer
+        margin-right 5px
+        border 1px solid rgba(0,0,0,0.1)
+        box-sizing border-box
+        box-shadow 0 1px 2px rgba(0,0,0,0.1)
+
+        &:last-child
+            margin-right 0
 
         &:hover
-            opacity 0.9
+            opacity 0.75
 
     input[type="range"]
         -webkit-appearance none
         padding 10px 0
+        background transparent
+        width 75px
 
         &:focus
             outline none
