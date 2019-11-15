@@ -39,6 +39,11 @@
 
 <script>
     import Drawing from '@/components/Drawing'
+    import Mousetrap from 'mousetrap'
+    import {remote} from 'electron'
+    import http from 'http'
+    import fs from 'fs'
+    import path from 'path'
 
     export default {
         name: 'Sketch',
@@ -71,6 +76,7 @@
             chooseColorHandler(color) {
                 this.color = color;
             },
+
             toRgb(color, alpha = null) {
                 if (color[3] === undefined) {
                     color[3] = 1;
@@ -89,10 +95,18 @@
 
             stopDrawingHandler() {
                 document.body.classList.remove('drawing');
+            },
+
+            saveImageHandler() {
+                const localPath = remote.app.getPath('desktop');
+
+                const savePath = remote.dialog.showSaveDialogSync({
+                    defaultPath: localPath
+                });
             }
         },
         mounted() {
-
+            // Mousetrap.bind('meta+s', this.saveImageHandler.bind(this));
         }
     }
 </script>
@@ -168,13 +182,13 @@
 
         &::-webkit-slider-runnable-track
             height 2px
-            background rgba(0,0,0,0.2)
+            background rgba(0,0,0,0.1)
 
         &::-webkit-slider-thumb
             -webkit-appearance: none;
             width 10px
             height 10px
-            background rgba(0,0,0,1)
+            background rgba(50,50,50,1)
             margin-top -4px
             border-radius 100%
 

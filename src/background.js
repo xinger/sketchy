@@ -42,6 +42,16 @@ function createWindow() {
     win.on('closed', () => {
         win = null
     })
+
+    const { Menu, MenuItem } = require('electron')
+    const menu = new Menu()
+
+    menu.append(new MenuItem({
+        label: 'Print',
+        accelerator: 'CmdOrCtrl+P',
+        click: () => { console.log('time to print stuff') }
+    }))
+
 }
 
 // Quit when all windows are closed.
