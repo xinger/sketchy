@@ -99,7 +99,7 @@
 
       saveImageHandler() {
         const localPath = remote.app.getPath('desktop');
-        const postfix = dateFormat(new Date(), 'dd.mm.yyyy HH:MM:ss');
+        const postfix = dateFormat(new Date(), 'dd.mm.yyyy HH.MM.ss');
         const fileName = `Sketch ${postfix}.png`;
 
         ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
