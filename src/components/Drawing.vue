@@ -6,7 +6,7 @@
 </template>
 
 <script>
-  import Drawing from '@/classes/Drawing2';
+  import Drawing from '@/classes/Drawing';
   import Mousetrap from 'mousetrap';
 
   export default {

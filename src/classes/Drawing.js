@@ -1,179 +1,109 @@
 import AnimationFrame from '@/classes/AnimationFrame';
-
-class Line {
-    constructor({points = [], style = {}}) {
-        this.points = points;
-
-        this.pointsLength = points.length;
-
-        this.style = Object.assign({}, style);
-    }
-
-    addPoint(xy) {
-        this.points.push(xy);
-        this.pointsLength++;
-    }
-
-    getPoint(n) {
-        return this.points[n];
-    }
-
-    getPointsLength() {
-        return this.pointsLength;
-    }
-
-    toData() {
-        return {
-            points: this.points,
-            style: this.style
-        };
-    }
-}
+import * as d3 from 'd3';
 
 class Drawing {
-    constructor(canvas, config) {
-        this.canvas = canvas;
-        this.config = config;
-
-        this.resizeScene();
-
-        this.ctx = this.canvas.getContext('2d');
-        this.ctx.lineJoin = this.ctx.lineCap = 'round';
-        this.ctx.shadowBlur = 10;
-        // this.ctx.shadowColor = 'rgb(0, 0, 0)';
-
-        this.isDrawing = false;
-        this.lines = [];
-        this.line = null;
-
-        this.lineStyle = {
-            thickness: 3,
-            color: 'rgba(0,0,0,1)'
-        };
-
-        this.raf = new AnimationFrame(this.updateScene.bind(this));
-
-        /** Bind events */
-        this.canvas.onmousedown = this.mouseDownHandler.bind(this);
-        this.canvas.onmousemove = this.mouseMoveHandler.bind(this);
-        window.onmouseup = this.mouseUpHandler.bind(this);
-        window.onresize = this.windowResizeHandler.bind(this);
-    }
+  constructor(svgContainer, config) {
+    this.svgContainer = svgContainer;
+    this.config = config;
 
     /**
-     * Handlers
+     * Styles of the line
+     *
+     * @type {{color: string, thickness: number}}
      */
-    mouseDownHandler(e) {
-        this.isDrawing = true;
-
-        this.line = new Line({
-            style: this.lineStyle
-        });
-
-        this.line.addPoint([e.clientX, e.clientY]);
-
-        this.lines.push(this.line);
-
-        this.raf.start();
-
-        if (this.config.events.start) {
-            this.config.events.start();
-        }
-    }
-
-    mouseMoveHandler(e) {
-        if (!this.isDrawing) return;
-
-        this.line.addPoint([e.clientX, e.clientY]);
-    }
-
-    mouseUpHandler(e) {
-        if (!this.isDrawing) return;
-
-        this.raf.stop();
-        this.isDrawing = false;
-
-        this.line = null;
-
-        if (this.config.events.stop) {
-            this.config.events.stop();
-        }
-    }
-
-    windowResizeHandler() {
-        this.resizeScene();
-        this.updateScene();
-    }
+    this.lineStyle = {
+      'fill': 'none',
+      'stroke': '#f0f',
+      'stroke-width': '3px',
+      'stroke-linejoin': 'round',
+      'stroke-linecap': 'round'
+    };
 
     /**
-     * Canvas functions
+     * D3 line definition
      */
-    clearScene() {
-        this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
-    }
-
-    drawLine(line) {
-        let p1 = line.getPoint(0);
-        let p2 = line.getPoint(1);
-
-        if (!p1) return;
-
-        this.ctx.beginPath();
-        this.ctx.moveTo(p1[0], p1[1]);
-
-        for (let i = 1, len = line.getPointsLength(); i < len; i++) {
-            let midPoint = this.midPointBtw(p1, p2);
-
-            this.ctx.quadraticCurveTo(p1[0], p1[1], midPoint[0], midPoint[1]);
-
-            p1 = line.getPoint(i);
-            p2 = line.getPoint(i + 1);
-        }
-
-        this.ctx.lineTo(p1[0], p1[1]);
-        this.ctx.stroke();
-
-        p1 = null;
-        p2 = null;
-    }
-
-    resizeScene() {
-        let rect = this.canvas.getBoundingClientRect();
-
-        this.canvas.width = rect.width;
-        this.canvas.height = rect.height;
-    }
-
-    updateScene() {
-        this.clearScene();
-
-        this.lines.forEach((line) => {
-            /** Set line styles */
-            this.ctx.lineWidth = line.style.thickness;
-            this.ctx.strokeStyle = line.style.color;
-            this.drawLine(line);
-        });
-    }
-
-    thickness(val) {
-        this.lineStyle.thickness = val;
-        this.updateScene();
-    }
-
-    color(val) {
-        this.lineStyle.color = val;
-        this.updateScene();
-    }
+    this.line = d3.line();
+    this.line.curve(d3.curveBasis);
 
     /**
-     * Helpers
+     * Make svg draggable
+     *
+     * @type {void | Selection | Transition | string}
      */
-    midPointBtw(p1, p2) {
-        return [
-            p1[0] + (p2[0] - p1[0]) / 2,
-            p1[1] + (p2[1] - p1[1]) / 2
-        ];
+    this.svg = d3.select('#svg');
+    this.svg.call(d3.drag()
+      .container((function () {
+        return this
+      }))
+      .subject(function () {
+        let p = [d3.event.x, d3.event.y];
+        return [p, p]
+      })
+      .on("start", this.dragStartHandler.bind(this))
+      .on("end", this.dragEndHandler.bind(this))
+    );
+
+    this.history = [];
+  }
+
+  /**
+   * Handlers
+   */
+  dragStartHandler() {
+    let d = d3.event.subject,
+      active = this.svg.append("path").datum(d),
+      x0 = d3.event.x,
+      y0 = d3.event.y;
+
+    this.setLineAttrs(active);
+
+    this.history.push(active);
+
+    d3.event.on("drag", () => {
+      let x1 = d3.event.x,
+        y1 = d3.event.y,
+        dx = x1 - x0,
+        dy = y1 - y0;
+
+      if (dx * dx + dy * dy > 50) {
+        d.push([x0 = x1, y0 = y1])
+      } else {
+        d[d.length - 1] = [x1, y1]
+      }
+
+      active.attr("d", this.line);
+    });
+
+    if (this.config.events.start) {
+      this.config.events.start();
     }
+  }
+
+  dragEndHandler() {
+    if (this.config.events.stop) {
+      this.config.events.stop();
+    }
+  }
+
+  setLineAttrs(line) {
+    Object.keys(this.lineStyle).forEach(key => {
+      line.attr(key, this.lineStyle[key]);
+    });
+  }
+
+  thickness(val) {
+    this.lineStyle['stroke-width'] = `${val}px`
+  }
+
+  color(val) {
+    this.lineStyle['stroke'] = val;
+  }
+
+  undo() {
+    if (this.history.length > 0) {
+      this.history.splice(-1)[0].remove();
+    }
+  }
 }
 
 export default Drawing

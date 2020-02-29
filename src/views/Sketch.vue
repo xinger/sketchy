@@ -41,6 +41,7 @@
   import Drawing from '@/components/Drawing'
   import Mousetrap from 'mousetrap'
   import {remote} from 'electron'
+  import dateFormat from 'dateformat'
   import * as ssvg from 'save-svg-as-png';
   import http from 'http'
   import fs from 'fs'
@@ -98,16 +99,12 @@
 
       saveImageHandler() {
         const localPath = remote.app.getPath('desktop');
+        const postfix = dateFormat(new Date(), 'dd.mm.yyyy HH:MM:ss');
+        const fileName = `Sketch ${postfix}.png`;
 
-        ssvg.saveSvgAsPng(document.getElementById('svg'), 'sketch.png', {
+        ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
           backgroundColor: '#ffffff'
         });
-
-        console.log(localPath);
-
-        // const savePath = remote.dialog.showSaveDialogSync({
-        //     defaultPath: localPath
-        // });
       }
     },
     mounted() {
