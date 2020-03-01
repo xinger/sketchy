@@ -3,6 +3,7 @@
     <drawing
         :thickness="parseInt(lineThickness)"
         :color="lineColor"
+        :dashed="lineDashed"
         @start="startDrawingHandler"
         @stop="stopDrawingHandler"
     ></drawing>
@@ -11,21 +12,25 @@
 
       <div class="sketch__control">
         <label>Thickness</label>
-        <input type="range" v-model="lineThickness" min="3" max="23" step="5">
+        <input type="range" v-model.number="lineThickness" min="3" max="23" step="5">
       </div>
 
       <div class="sketch__control">
         <label>Opacity</label>
-        <input style="direction: rtl" type="range" v-model="opacity" min="0" max="100" step="10">
+        <input style="direction: rtl" type="range" v-model.number="opacity" min="0" max="100" step="10">
+      </div>
+
+      <div class="sketch__control">
+        <label>Dashed</label>
+        <input type="range" v-model.number="lineDashed" min="0" max="8" step="2">
       </div>
 
       <div class="sketch__control" style="flex-direction: row">
         <label>Color</label>
         <div class="color"
              v-for="clr in colors"
-             :style="{
-                        background: toRgb(clr)
-                     }"
+             :style="colorStyles(clr)"
+             :class="{'color--active': color === clr}"
              @click="chooseColorHandler(clr)"
         ></div>
 
@@ -43,22 +48,22 @@
   import {remote} from 'electron'
   import dateFormat from 'dateformat'
   import * as ssvg from 'save-svg-as-png';
-  import http from 'http'
-  import fs from 'fs'
-  import path from 'path'
+  import { ipcRenderer } from 'electron';
 
   export default {
     name: 'Sketch',
     data: function () {
       return {
         lineThickness: 3,
+        lineDashed: 0,
         opacity: 100,
         colors: [
           [0, 0, 0],
           [242, 95, 92],
           [255, 224, 102],
           [36, 123, 160],
-          [12, 193, 179]
+          [12, 193, 179],
+          [255, 255, 255]
         ],
         color: [0, 0, 0]
       }
@@ -103,12 +108,31 @@
         const fileName = `Sketch ${postfix}.png`;
 
         ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
-          backgroundColor: '#ffffff'
+          backgroundColor: '#ffffff',
+          scale: 2
         });
+      },
+
+      colorStyles(clr) {
+        if (this.toRgb(this.color) === this.toRgb(clr)) {
+          return {
+            background: this.toRgb(clr),
+            boxShadow: '0px 0px 0px 1px #fff, 0px 0px 0px 2px ' + this.toRgb(clr, 0.5)
+          }
+        }else{
+          return {
+            background: this.toRgb(clr),
+          }
+        }
+      },
+
+      newWindowHandler() {
+        ipcRenderer.send('open-new-window');
       }
     },
     mounted() {
       Mousetrap.bind('meta+s', this.saveImageHandler.bind(this));
+      Mousetrap.bind('meta+n', this.newWindowHandler.bind(this));
     }
   }
 </script>

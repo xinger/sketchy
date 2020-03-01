@@ -17,6 +17,10 @@
         type: Number,
         default: 3
       },
+      dashed: {
+        type: Number,
+        default: 0
+      },
       color: {
         type: String,
         default: 'rgba(0,0,0,1)'
@@ -44,13 +48,18 @@
 
       this.drawing.thickness(this.thickness);
       this.drawing.color(this.color);
+      this.drawing.dashed(this.dashed);
     },
     watch: {
       thickness(val) {
         this.drawing.thickness(val);
+        this.drawing.dashed(val);
       },
       color(val) {
         this.drawing.color(val);
+      },
+      dashed(val) {
+        this.drawing.dashed(val);
       }
     }
   }

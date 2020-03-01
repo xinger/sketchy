@@ -16,7 +16,8 @@ class Drawing {
       'stroke': '#f0f',
       'stroke-width': '3px',
       'stroke-linejoin': 'round',
-      'stroke-linecap': 'round'
+      'stroke-linecap': 'round',
+      'stroke-dasharray': '0'
     };
 
     /**
@@ -97,6 +98,10 @@ class Drawing {
 
   color(val) {
     this.lineStyle['stroke'] = val;
+  }
+
+  dashed(val) {
+    this.lineStyle['stroke-dasharray'] = val * parseInt(this.lineStyle['stroke-width']);
   }
 
   undo() {
