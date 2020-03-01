@@ -12,12 +12,12 @@ class Drawing {
      * @type {{color: string, thickness: number}}
      */
     this.lineStyle = {
-      'fill': 'none',
-      'stroke': '#f0f',
+      fill: 'none',
+      stroke: '#f0f',
       'stroke-width': '3px',
       'stroke-linejoin': 'round',
       'stroke-linecap': 'round',
-      'stroke-dasharray': '0'
+      'stroke-dasharray': '0',
     };
 
     /**
@@ -33,15 +33,16 @@ class Drawing {
      */
     this.svg = d3.select('#svg');
     this.svg.call(d3.drag()
-      .container((function () {
-        return this
-      }))
-      .subject(function () {
-        let p = [d3.event.x, d3.event.y];
-        return [p, p]
+      .container(function () {
+        return this;
       })
-      .on("start", this.dragStartHandler.bind(this))
-      .on("end", this.dragEndHandler.bind(this))
+      .subject(function () {
+        const p = [d3.event.x, d3.event.y];
+
+        return [p, p];
+      })
+      .on('start', this.dragStartHandler.bind(this))
+      .on('end', this.dragEndHandler.bind(this))
     );
 
     this.history = [];
@@ -51,28 +52,28 @@ class Drawing {
    * Handlers
    */
   dragStartHandler() {
-    let d = d3.event.subject,
-      active = this.svg.append("path").datum(d),
-      x0 = d3.event.x,
-      y0 = d3.event.y;
+    const d = d3.event.subject;
+    const active = this.svg.append('path').datum(d);
+    let x0 = d3.event.x;
+    let y0 = d3.event.y;
 
     this.setLineAttrs(active);
 
     this.history.push(active);
 
-    d3.event.on("drag", () => {
-      let x1 = d3.event.x,
-        y1 = d3.event.y,
-        dx = x1 - x0,
-        dy = y1 - y0;
+    d3.event.on('drag', () => {
+      const x1 = d3.event.x;
+      const y1 = d3.event.y;
+      const dx = x1 - x0;
+      const dy = y1 - y0;
 
       if (dx * dx + dy * dy > 50) {
-        d.push([x0 = x1, y0 = y1])
+        d.push([x0 = x1, y0 = y1]);
       } else {
-        d[d.length - 1] = [x1, y1]
+        d[d.length - 1] = [x1, y1];
       }
 
-      active.attr("d", this.line);
+      active.attr('d', this.line);
     });
 
     if (this.config.events.start) {
@@ -93,11 +94,11 @@ class Drawing {
   }
 
   thickness(val) {
-    this.lineStyle['stroke-width'] = `${val}px`
+    this.lineStyle['stroke-width'] = `${val}px`;
   }
 
   color(val) {
-    this.lineStyle['stroke'] = val;
+    this.lineStyle.stroke = val;
   }
 
   dashed(val) {
@@ -114,15 +115,15 @@ class Drawing {
     let image = this.svg.select('image');
 
     if (image.empty()) {
-      image = this.svg.append("image");
+      image = this.svg.append('image');
     }
 
     image.attr('xlink:href', imageFilePath)
       .attr('x', 0)
       .attr('y', 0)
       .attr('width', '100%')
-      .attr('height', '100%')
+      .attr('height', '100%');
   }
 }
 
-export default Drawing
+export default Drawing;

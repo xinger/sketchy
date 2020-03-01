@@ -7,22 +7,25 @@ const Sketch = () => import('../views/Sketch');
 Vue.use(VueRouter);
 
 const routes = [
-    { path: '/', redirect: '/main' },
-    /* Main window routes */
-    {
-        path: '/main',
-        component: MainWindow,
-        children: [
-            {
-                path: '',
-                component: Sketch
-            }
-        ]
-    },
+  {
+    path: '/',
+    redirect: '/main',
+  },
+  /* Main window routes */
+  {
+    path: '/main',
+    component: MainWindow,
+    children: [
+      {
+        path: '',
+        component: Sketch,
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({
-  routes
+  routes,
 });
 
-export default router
+export default router;

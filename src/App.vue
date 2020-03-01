@@ -35,5 +35,4 @@
         .drag
             pointer-events none !important
 
-
 </style>

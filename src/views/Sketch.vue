@@ -36,105 +36,103 @@
 
       </div>
 
-
     </div>
 
   </div>
 </template>
 
 <script>
-  import Drawing from '@/components/Drawing'
-  import Mousetrap from 'mousetrap'
-  import {remote} from 'electron'
-  import dateFormat from 'dateformat'
-  import * as ssvg from 'save-svg-as-png';
-  import { ipcRenderer } from 'electron';
+import Drawing from '@/components/Drawing';
+import Mousetrap from 'mousetrap';
+import { remote, ipcRenderer } from 'electron';
+import dateFormat from 'dateformat';
+import * as ssvg from 'save-svg-as-png';
 
-  export default {
-    name: 'Sketch',
-    data: function () {
-      return {
-        lineThickness: 3,
-        lineDashed: 0,
-        opacity: 100,
-        colors: [
-          [0, 0, 0],
-          [242, 95, 92],
-          [255, 224, 102],
-          [36, 123, 160],
-          [12, 193, 179],
-          [255, 255, 255]
-        ],
-        color: [0, 0, 0]
+export default {
+  name: 'Sketch',
+  data: function () {
+    return {
+      lineThickness: 3,
+      lineDashed: 0,
+      opacity: 100,
+      colors: [
+        [0, 0, 0],
+        [242, 95, 92],
+        [255, 224, 102],
+        [36, 123, 160],
+        [12, 193, 179],
+        [255, 255, 255],
+      ],
+      color: [0, 0, 0],
+    };
+  },
+  components: {
+    Drawing,
+  },
+  props: {},
+  computed: {
+    lineColor() {
+      return this.toRgb(this.color, this.opacity / 100);
+    },
+  },
+  methods: {
+    chooseColorHandler(color) {
+      this.color = color;
+    },
+
+    toRgb(color, alpha = null) {
+      if (color[3] === undefined) {
+        color[3] = 1;
+      }
+
+      if (alpha !== null) {
+        color[3] = alpha;
+      }
+
+      return `rgba(${color.join(',')})`;
+    },
+
+    startDrawingHandler() {
+      document.body.classList.add('drawing');
+    },
+
+    stopDrawingHandler() {
+      document.body.classList.remove('drawing');
+    },
+
+    saveImageHandler() {
+      const localPath = remote.app.getPath('desktop');
+      const postfix = dateFormat(new Date(), 'dd.mm.yyyy HH.MM.ss');
+      const fileName = `Sketch ${postfix}.png`;
+
+      ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+      });
+    },
+
+    colorStyles(clr) {
+      if (this.toRgb(this.color) === this.toRgb(clr)) {
+        return {
+          background: this.toRgb(clr),
+          boxShadow: '0px 0px 0px 1px #fff, 0px 0px 0px 2px ' + this.toRgb(clr, 0.5),
+        };
+      } else {
+        return {
+          background: this.toRgb(clr),
+        };
       }
     },
-    components: {
-      Drawing
+
+    newWindowHandler() {
+      ipcRenderer.send('open-new-window');
     },
-    props: {},
-    computed: {
-      lineColor() {
-        return this.toRgb(this.color, this.opacity / 100);
-      }
-    },
-    methods: {
-      chooseColorHandler(color) {
-        this.color = color;
-      },
-
-      toRgb(color, alpha = null) {
-        if (color[3] === undefined) {
-          color[3] = 1;
-        }
-
-        if (alpha !== null) {
-          color[3] = alpha;
-        }
-
-        return `rgba(${color.join(',')})`;
-      },
-
-      startDrawingHandler() {
-        document.body.classList.add('drawing');
-      },
-
-      stopDrawingHandler() {
-        document.body.classList.remove('drawing');
-      },
-
-      saveImageHandler() {
-        const localPath = remote.app.getPath('desktop');
-        const postfix = dateFormat(new Date(), 'dd.mm.yyyy HH.MM.ss');
-        const fileName = `Sketch ${postfix}.png`;
-
-        ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
-          backgroundColor: '#ffffff',
-          scale: 2
-        });
-      },
-
-      colorStyles(clr) {
-        if (this.toRgb(this.color) === this.toRgb(clr)) {
-          return {
-            background: this.toRgb(clr),
-            boxShadow: '0px 0px 0px 1px #fff, 0px 0px 0px 2px ' + this.toRgb(clr, 0.5)
-          }
-        }else{
-          return {
-            background: this.toRgb(clr),
-          }
-        }
-      },
-
-      newWindowHandler() {
-        ipcRenderer.send('open-new-window');
-      }
-    },
-    mounted() {
-      Mousetrap.bind('meta+s', this.saveImageHandler.bind(this));
-      Mousetrap.bind('meta+n', this.newWindowHandler.bind(this));
-    }
-  }
+  },
+  mounted() {
+    Mousetrap.bind('meta+s', this.saveImageHandler.bind(this));
+    Mousetrap.bind('meta+n', this.newWindowHandler.bind(this));
+  },
+};
 </script>
 
 <style lang="stylus">
@@ -218,6 +216,5 @@
       background rgba(50, 50, 50, 1)
       margin-top -4px
       border-radius 100%
-
 
 </style>
