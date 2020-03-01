@@ -68,7 +68,7 @@ export default {
   watch: {
     thickness(val) {
       this.drawing.thickness(val);
-      this.drawing.dashed(val);
+      this.drawing.dashed(this.dashed);
     },
     color(val) {
       this.drawing.color(val);
