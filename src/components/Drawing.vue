@@ -8,6 +8,7 @@
 <script>
   import Drawing from '@/classes/Drawing';
   import Mousetrap from 'mousetrap';
+  import * as fs from 'fs';
 
   export default {
     name: 'Drawing',
@@ -49,6 +50,20 @@
       this.drawing.thickness(this.thickness);
       this.drawing.color(this.color);
       this.drawing.dashed(this.dashed);
+
+      document.ondragover = document.ondrop = (event) => {
+        event.preventDefault()
+      };
+
+      document.body.ondrop = (event) => {
+        const fileName = event.dataTransfer.files[0].path;
+
+        const imageInBase64 = 'data:image/png;base64,' + fs.readFileSync(fileName).toString('base64');
+
+        this.drawing.setImage(imageInBase64);
+
+        event.preventDefault()
+      };
     },
     watch: {
       thickness(val) {

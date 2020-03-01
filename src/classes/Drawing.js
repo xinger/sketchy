@@ -109,6 +109,20 @@ class Drawing {
       this.history.splice(-1)[0].remove();
     }
   }
+
+  setImage(imageFilePath) {
+    let image = this.svg.select('image');
+
+    if (image.empty()) {
+      image = this.svg.append("image");
+    }
+
+    image.attr('xlink:href', imageFilePath)
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', '100%')
+      .attr('height', '100%')
+  }
 }
 
 export default Drawing
