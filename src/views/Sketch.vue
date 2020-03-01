@@ -28,7 +28,8 @@
       <div class="sketch__control" style="flex-direction: row">
         <label>Color</label>
         <div class="color"
-             v-for="clr in colors"
+             v-for="(clr, i) in colors"
+             :key="i"
              :style="colorStyles(clr)"
              :class="{'color--active': color === clr}"
              @click="chooseColorHandler(clr)"
@@ -42,9 +43,10 @@
 </template>
 
 <script>
+/* eslint-disable require-jsdoc, no-magic-numbers, camelcase, valid-jsdoc, no-debugger */
 import Drawing from '@/components/Drawing';
 import Mousetrap from 'mousetrap';
-import { remote, ipcRenderer } from 'electron';
+import { ipcRenderer } from 'electron';
 import dateFormat from 'dateformat';
 import * as ssvg from 'save-svg-as-png';
 
@@ -101,9 +103,9 @@ export default {
     },
 
     saveImageHandler() {
-      const localPath = remote.app.getPath('desktop');
-      const postfix = dateFormat(new Date(), 'dd.mm.yyyy HH.MM.ss');
-      const fileName = `Sketch ${postfix}.png`;
+      // const localPath = remote.app.getPath('desktop');
+      const date = dateFormat(new Date(), 'dd.mm.yyyy HH.MM.ss');
+      const fileName = `Sketch ${date}.png`;
 
       ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
         backgroundColor: '#ffffff',

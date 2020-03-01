@@ -1,3 +1,5 @@
+/* eslint-disable require-jsdoc, no-magic-numbers, camelcase, valid-jsdoc, no-debugger */
+
 class AnimationFrame {
   constructor(func) {
     this.raf = null;

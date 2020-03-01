@@ -1,10 +1,10 @@
-'use strict';
+/* eslint-disable require-jsdoc, no-magic-numbers, camelcase, valid-jsdoc, no-debugger */
 
 import { app, protocol, BrowserWindow, ipcMain } from 'electron';
 import {
-  createProtocol,
-  installVueDevtools
+  createProtocol
 } from 'vue-cli-plugin-electron-builder/lib';
+import * as path from 'path';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -31,7 +31,7 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      icon: __dirname + '/../build/icon.icns',
+      icon: path.join(__dirname, '/../build/icon.icns'),
     },
   });
 
