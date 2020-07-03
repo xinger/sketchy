@@ -1,7 +1,7 @@
 <template>
   <!--  https://codepen.io/uNickHow/pen/WOYBQP -->
   <div class="drawing">
-    <svg id="svg" ref="drawing"></svg>
+    <svg id="svg" ref="drawing" />
   </div>
 </template>
 

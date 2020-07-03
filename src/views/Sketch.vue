@@ -6,7 +6,7 @@
         :dashed="lineDashed"
         @start="startDrawingHandler"
         @stop="stopDrawingHandler"
-    ></drawing>
+    />
 
     <div class="sketch__panel">
 
@@ -43,98 +43,97 @@
 </template>
 
 <script>
-/* eslint-disable require-jsdoc, no-magic-numbers, camelcase, valid-jsdoc, no-debugger */
-import Drawing from '@/components/Drawing';
-import Mousetrap from 'mousetrap';
-import { ipcRenderer } from 'electron';
-import dateFormat from 'dateformat';
-import * as ssvg from 'save-svg-as-png';
+  import Drawing from '@/components/Drawing';
+  import Mousetrap from 'mousetrap';
+  import {ipcRenderer} from 'electron';
+  import dateFormat from 'dateformat';
+  import * as ssvg from 'save-svg-as-png';
 
-export default {
-  name: 'Sketch',
-  data: function () {
-    return {
-      lineThickness: 3,
-      lineDashed: 0,
-      opacity: 100,
-      colors: [
-        [0, 0, 0],
-        [242, 95, 92],
-        [255, 224, 102],
-        [36, 123, 160],
-        [12, 193, 179],
-        [255, 255, 255],
-      ],
-      color: [0, 0, 0],
-    };
-  },
-  components: {
-    Drawing,
-  },
-  props: {},
-  computed: {
-    lineColor() {
-      return this.toRgb(this.color, this.opacity / 100);
+  export default {
+    name: 'Sketch',
+    data: function () {
+      return {
+        lineThickness: 3,
+        lineDashed: 0,
+        opacity: 100,
+        colors: [
+          [0, 0, 0],
+          [242, 95, 92],
+          [255, 224, 102],
+          [36, 123, 160],
+          [12, 193, 179],
+          [255, 255, 255],
+        ],
+        color: [0, 0, 0],
+      };
     },
-  },
-  methods: {
-    chooseColorHandler(color) {
-      this.color = color;
+    components: {
+      Drawing,
     },
-
-    toRgb(color, alpha = null) {
-      if (color[3] === undefined) {
-        color[3] = 1;
-      }
-
-      if (alpha !== null) {
-        color[3] = alpha;
-      }
-
-      return `rgba(${color.join(',')})`;
+    props: {},
+    computed: {
+      lineColor() {
+        return this.toRgb(this.color, this.opacity / 100);
+      },
     },
+    methods: {
+      chooseColorHandler(color) {
+        this.color = color;
+      },
 
-    startDrawingHandler() {
-      document.body.classList.add('drawing');
+      toRgb(color, alpha = null) {
+        if (color[3] === undefined) {
+          color[3] = 1;
+        }
+
+        if (alpha !== null) {
+          color[3] = alpha;
+        }
+
+        return `rgba(${color.join(',')})`;
+      },
+
+      startDrawingHandler() {
+        document.body.classList.add('drawing');
+      },
+
+      stopDrawingHandler() {
+        document.body.classList.remove('drawing');
+      },
+
+      saveImageHandler() {
+        // const localPath = remote.app.getPath('desktop');
+        const date = dateFormat(new Date(), 'dd.mm.yyyy HH.MM.ss');
+        const fileName = `Sketch ${date}.png`;
+
+        ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
+          backgroundColor: '#ffffff',
+          scale: 2,
+        });
+      },
+
+      colorStyles(clr) {
+        if (this.toRgb(this.color) === this.toRgb(clr)) {
+          return {
+            background: this.toRgb(clr),
+            boxShadow: '0px 0px 0px 1px #fff, 0px 0px 0px 2px ' + this.toRgb(clr, 0.5),
+          };
+        } else {
+          return {
+            background: this.toRgb(clr),
+          };
+        }
+      },
+
+      newWindowHandler() {
+        ipcRenderer.send('open-new-window');
+      },
     },
-
-    stopDrawingHandler() {
-      document.body.classList.remove('drawing');
+    mounted() {
+      Mousetrap.bind('meta+s', this.saveImageHandler.bind(this));
+      Mousetrap.bind('meta+n', this.newWindowHandler.bind(this));
     },
-
-    saveImageHandler() {
-      // const localPath = remote.app.getPath('desktop');
-      const date = dateFormat(new Date(), 'dd.mm.yyyy HH.MM.ss');
-      const fileName = `Sketch ${date}.png`;
-
-      ssvg.saveSvgAsPng(document.getElementById('svg'), fileName, {
-        backgroundColor: '#ffffff',
-        scale: 2,
-      });
-    },
-
-    colorStyles(clr) {
-      if (this.toRgb(this.color) === this.toRgb(clr)) {
-        return {
-          background: this.toRgb(clr),
-          boxShadow: '0px 0px 0px 1px #fff, 0px 0px 0px 2px ' + this.toRgb(clr, 0.5),
-        };
-      } else {
-        return {
-          background: this.toRgb(clr),
-        };
-      }
-    },
-
-    newWindowHandler() {
-      ipcRenderer.send('open-new-window');
-    },
-  },
-  mounted() {
-    Mousetrap.bind('meta+s', this.saveImageHandler.bind(this));
-    Mousetrap.bind('meta+n', this.newWindowHandler.bind(this));
-  },
-};
+  };
 </script>
 
 <style lang="stylus">

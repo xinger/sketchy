@@ -10,6 +10,7 @@ module.exports = {
     parser: 'babel-eslint',
   },
   rules: {
+    "no-debugger": "off",
     'arrow-spacing': [2, {
       before: true,
       after: true,

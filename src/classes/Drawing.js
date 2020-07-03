@@ -1,5 +1,3 @@
-/* eslint-disable require-jsdoc, no-magic-numbers, camelcase, valid-jsdoc, no-debugger */
-
 import * as d3 from 'd3';
 
 class Drawing {
