@@ -56,7 +56,7 @@
         lineThickness: 3,
         lineDashed: 0,
         opacity: 100,
-        colors: [
+        colors_rgb: [
           [0, 0, 0],
           [242, 95, 92],
           [255, 224, 102],
@@ -64,7 +64,15 @@
           [12, 193, 179],
           [255, 255, 255],
         ],
-        color: [0, 0, 0],
+        colors: [
+          '--color-1',
+          '--color-2',
+          '--color-3',
+          '--color-4',
+          '--color-5',
+          '--color-6',
+        ],
+        color: '--color-1',
       };
     },
     components: {
@@ -73,7 +81,8 @@
     props: {},
     computed: {
       lineColor() {
-        return this.toRgb(this.color, this.opacity / 100);
+        // return this.toRgb(this.color, this.opacity / 100);
+        return `var(${this.color})`;
       },
     },
     methods: {
@@ -113,14 +122,14 @@
       },
 
       colorStyles(clr) {
-        if (this.toRgb(this.color) === this.toRgb(clr)) {
+        if (this.color === clr) {
           return {
-            background: this.toRgb(clr),
-            boxShadow: '0px 0px 0px 1px #fff, 0px 0px 0px 2px ' + this.toRgb(clr, 0.5),
+            background: `var(${clr})`,
+            boxShadow: '0px 0px 0px 1px var(--app-bg), 0px 0px 0px 2px ' + `var(${clr})`,
           };
         } else {
           return {
-            background: this.toRgb(clr),
+            background: `var(${clr})`,
           };
         }
       },
@@ -155,7 +164,7 @@
       padding 0 12px
       box-sizing border-box
       justify-content: flex-end;
-      border-top 1px solid rgba(0, 0, 0, 0)
+      border-top 1px solid var(--border-default)
 
       &__container
         display flex
@@ -169,8 +178,8 @@
 
       &:hover
         opacity 1
-        border-top 1px solid rgba(0, 0, 0, 0.1)
-        background rgba(255, 255, 255, 0.9)
+        border-top 1px solid var(--border-hover)
+        background var(--panel-bg)
 
     &__control
       pointer-events auto
@@ -187,9 +196,8 @@
     height 16px
     border-radius 100%
     margin-right 5px
-    border 1px solid rgba(0, 0, 0, 0.1)
+    border 1px solid var(--border)
     box-sizing border-box
-    box-shadow 0 1px 2px rgba(0, 0, 0, 0.1)
 
     &:last-child
       margin-right 0
@@ -208,13 +216,13 @@
 
     &::-webkit-slider-runnable-track
       height 2px
-      background rgba(0, 0, 0, 0.1)
+      background var(--border)
 
     &::-webkit-slider-thumb
       -webkit-appearance: none;
       width 10px
       height 10px
-      background rgba(50, 50, 50, 1)
+      background var(--slider-thumb)
       margin-top -4px
       border-radius 100%
 
