@@ -1,0 +1,10 @@
+{
+  "light": {
+    "--app-bg": "#ffffff",
+    "--color-1": "#000000"
+  },
+  "dark": {
+    "--app-bg": "#333333",
+    "--color-1": "#cccccc"
+  }
+}
