@@ -7,7 +7,7 @@ import themes from '@/themes';
 
 Vue.config.productionTip = false;
 
-themes.set('light');
+themes.set('dark');
 
 new Vue({
   router,
