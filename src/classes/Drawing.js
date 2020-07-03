@@ -68,7 +68,7 @@ class Drawing {
       const dx = x1 - x0;
       const dy = y1 - y0;
 
-      if (dx * dx + dy * dy > 50) {
+      if (dx * dx + dy * dy > 5) {
         d.push([x0 = x1, y0 = y1]);
       } else {
         d[d.length - 1] = [x1, y1];
