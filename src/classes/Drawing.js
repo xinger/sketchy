@@ -9,12 +9,11 @@ class Drawing {
 
     /**
      * Styles of the line
-     *
      * @type {{color: string, thickness: number}}
      */
     this.lineStyle = {
-      fill: 'none',
-      stroke: '#f0f',
+      'fill': 'none',
+      'stroke': '#f0f',
       'stroke-width': '3px',
       'stroke-linejoin': 'round',
       'stroke-linecap': 'round',
@@ -29,8 +28,6 @@ class Drawing {
 
     /**
      * Make svg draggable
-     *
-     * @type {void | Selection | Transition | string}
      */
     this.svg = d3.select('#svg');
     this.svg.call(d3.drag()
@@ -50,7 +47,8 @@ class Drawing {
   }
 
   /**
-   * Handlers
+   * Drag start handler
+   * @returns {void}
    */
   dragStartHandler() {
     const d = d3.event.subject;
@@ -82,36 +80,69 @@ class Drawing {
     }
   }
 
+  /**
+   * Drag end handler
+   * @returns {void}
+   */
   dragEndHandler() {
     if (this.config.events.stop) {
       this.config.events.stop();
     }
   }
 
+  /**
+   * Set line attributes
+   * @param {object} line – d3 line
+   * @returns {void}
+   */
   setLineAttrs(line) {
     Object.keys(this.lineStyle).forEach(key => {
       line.attr(key, this.lineStyle[key]);
     });
   }
 
+  /**
+   * Thickness of the line
+   * @param {number} val – line thickness
+   * @returns {void}
+   */
   thickness(val) {
     this.lineStyle['stroke-width'] = `${val}px`;
   }
 
+  /**
+   * Color of the line
+   * @param {string} val – line color
+   * @returns {void}
+   */
   color(val) {
     this.lineStyle.stroke = val;
   }
 
+  /**
+   * Dashed property of the line
+   * @param {number} val – dashed value
+   * @returns {void}
+   */
   dashed(val) {
     this.lineStyle['stroke-dasharray'] = val * parseInt(this.lineStyle['stroke-width']);
   }
 
+  /**
+   * Undo action
+   * @returns {void}
+   */
   undo() {
     if (this.history.length > 0) {
       this.history.splice(-1)[0].remove();
     }
   }
 
+  /**
+   * Append image to svg
+   * @param {strong} imageFilePath – image file path
+   * @returns {void}
+   */
   setImage(imageFilePath) {
     let image = this.svg.select('image');
 
