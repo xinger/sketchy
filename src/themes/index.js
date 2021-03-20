@@ -1,3 +1,5 @@
+import {ipcRenderer} from 'electron';
+
 const themes = {
   light: {
     '--app-bg': 'rgba(255, 255, 255, 1)',
@@ -34,7 +36,6 @@ const themes = {
   }
 };
 
-
 /**
  * A class that handles themes
  */
@@ -45,6 +46,14 @@ class Themes {
    */
   constructor() {
     this.activeTheme = 'light';
+
+    ipcRenderer.invoke('os-theme').then(theme => {
+      this.set(theme);
+    });
+
+    ipcRenderer.on('os-theme-changed',(event, theme) => {
+      this.set(theme);
+    });
   }
 
   set(theme) {

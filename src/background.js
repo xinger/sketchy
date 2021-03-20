@@ -1,10 +1,10 @@
-import { app, protocol, BrowserWindow, ipcMain } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, nativeTheme } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import * as path from 'path';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-let win;
+let mainWindow;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([ {
@@ -16,13 +16,12 @@ protocol.registerSchemesAsPrivileged([ {
 } ]);
 
 function createWindow() {
-  // Create the browser window.
-  console.log(__dirname);
-  win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     title: 'Sketchy',
     titleBarStyle: 'hidden',
     width: 800,
     height: 1000,
+    backgroundColor: getTheme() === 'light' ? '#ffffff' : '#353535',
     x: 0,
     y: 0,
     webPreferences: {
@@ -32,17 +31,17 @@ function createWindow() {
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
-    win.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/main');
+    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + '#/main');
     if (!process.env.IS_TEST) {
-      win.webContents.openDevTools();
+      mainWindow.webContents.openDevTools();
     }
   } else {
     createProtocol('app');
-    win.loadURL('app://./index.html/#/main');
+    mainWindow.loadURL('app://./index.html/#/main');
   }
 
-  win.on('closed', () => {
-    win = null;
+  mainWindow.on('closed', () => {
+    mainWindow = null;
   });
 
   const { Menu, MenuItem } = require('electron');
@@ -72,7 +71,7 @@ app.on('window-all-closed', () => {
 });
 
 app.on('activate', () => {
-  if (win === null) {
+  if (mainWindow === null) {
     createWindow();
   }
 });
@@ -83,6 +82,28 @@ app.on('ready', async () => {
   ipcMain.on('open-new-window', (event, params) => {
     createWindow();
   });
+});
+
+/**
+ * Get OS theme
+ * @return {string}
+ */
+function getTheme() {
+  return nativeTheme.shouldUseDarkColors === true ? 'dark' : 'light';
+}
+
+/**
+ * Handle os theme for renderer process
+ */
+ipcMain.handle('os-theme', (event) => {
+  return getTheme();
+});
+
+/**
+ * Handle os theme changed
+ */
+nativeTheme.on('updated', () => {
+  mainWindow.webContents.send('os-theme-changed', getTheme());
 });
 
 if (isDevelopment) {
