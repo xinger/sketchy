@@ -20,10 +20,8 @@ function createWindow() {
     title: 'Sketchy',
     titleBarStyle: 'hidden',
     width: 800,
-    height: 1000,
+    height: 600,
     backgroundColor: getTheme() === 'light' ? '#ffffff' : '#353535',
-    x: 0,
-    y: 0,
     webPreferences: {
       nodeIntegration: true,
       icon: path.join(__dirname, '/../build/icon.icns'),
