@@ -1,6 +1,6 @@
 {
   "package": {
-    "productName": "my-tauri-app",
+    "productName": "Sketchy",
     "version": "0.1.0"
   },
   "build": {
@@ -13,13 +13,9 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "com.tauri.dev",
+      "identifier": "com.sketchy.dev",
       "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
+        "icons/icon.icns"
       ],
       "resources": [],
       "externalBin": [],
@@ -46,14 +42,19 @@
       }
     },
     "updater": {
-      "active": false
+      "active": true,
+      "endpoints": [
+          "https://gist.githubusercontent.com/xinger/cc392e123143966dda047a0847f50f62/raw/1f835cdbeb99bbb1877e8fd30e006ed37b6f9b28/sketchy-updater.json"
+      ],
+      "dialog": true,
+      "pubkey": ""
     },
     "allowlist": {
       "all": true
     },
     "windows": [
       {
-        "title": "Tauri App",
+        "title": "Sketchy",
         "width": 800,
         "height": 600,
         "resizable": true,

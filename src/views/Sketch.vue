@@ -63,6 +63,10 @@ export default {
       this.redo()
     })
 
+    Mousetrap.bind('command+r', () => {
+      this.clearCanvas()
+    })
+
     this.updateViewBounds()
 
     window.scope = this.scope
@@ -105,6 +109,8 @@ export default {
      */
     clearCanvas () {
       this.scope.project.activeLayer.removeChildren()
+      this.undoStack = [emptyState]
+      this.undoIndex = 1
     },
 
     clearLastPath () {
