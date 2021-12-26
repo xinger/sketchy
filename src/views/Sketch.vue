@@ -32,6 +32,14 @@ import Tools from '../components/Tools'
 
 const emptyState = '["Layer",{"applyMatrix": true,"children":[]}]'
 
+/**
+ * Todo list
+ *
+ * – Flashing window on start with dark theme
+ * – Active color on colors tool with dark theme
+ * – Dont quit app when all windows closed
+ */
+
 export default {
   components: {
     Tools
