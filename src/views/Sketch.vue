@@ -262,6 +262,6 @@ export default {
   z-index 2
   display flex
   justify-content center
-  padding-bottom 12px
+  padding-bottom 16px
   pointer-events none
 </style>
