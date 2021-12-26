@@ -22,13 +22,14 @@ fn main() {
         .add_native_item(MenuItem::ShowAll)
         .add_native_item(MenuItem::Separator)
         .add_native_item(MenuItem::Quit),
-    ))
-    .add_submenu(Submenu::new(
-      "File",
-      Menu::new()
+      ))
+      .add_submenu(Submenu::new(
+        "File",
+        Menu::new()
         .add_item(custom_menu("New").accelerator("cmdOrControl+N"))
         .add_native_item(MenuItem::Separator)
-        .add_item(custom_menu("Close").accelerator("cmdOrControl+W"))
+        .add_native_item(MenuItem::CloseWindow)
+        // .add_item(custom_menu("Close").accelerator("cmdOrControl+W"))
         .add_item(custom_menu("Save").accelerator("cmdOrControl+S"))
         .add_item(custom_menu("Save As...").accelerator("shift+cmdOrControl+S"))
         .add_native_item(MenuItem::Separator)

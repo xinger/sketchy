@@ -26,6 +26,7 @@
 import paper from 'paper'
 import { getStroke, getStrokePoints } from 'perfect-freehand'
 import Mousetrap from 'mousetrap'
+import { WebviewWindow } from '@tauri-apps/api/window'
 
 import Tools from '../components/Tools'
 
@@ -65,6 +66,14 @@ export default {
 
     Mousetrap.bind('command+r', () => {
       this.clearCanvas()
+    })
+
+    Mousetrap.bind('command+n', () => {
+      const webview = new WebviewWindow(`sketcy-${Math.random()}`, {
+        url: '/',
+        center: true,
+        title: 'Sketchy'
+      })
     })
 
     this.updateViewBounds()
